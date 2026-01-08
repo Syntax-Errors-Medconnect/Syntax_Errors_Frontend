@@ -250,6 +250,7 @@ export default function DoctorAppointmentsPage() {
                                                         <StartVideoCallButton
                                                             appointmentId={apt._id}
                                                             status={apt.status}
+                                                            requestedDate={apt.requestedDate}
                                                             className="w-full"
                                                         />
                                                     </div>

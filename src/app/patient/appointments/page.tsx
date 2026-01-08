@@ -207,6 +207,7 @@ export default function MyAppointmentsPage() {
                                                     <StartVideoCallButton
                                                         appointmentId={appointment._id}
                                                         status={appointment.status}
+                                                        requestedDate={appointment.requestedDate}
                                                         className="w-full text-sm"
                                                     />
                                                 </div>

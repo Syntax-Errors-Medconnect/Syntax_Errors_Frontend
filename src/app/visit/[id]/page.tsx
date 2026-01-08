@@ -5,15 +5,20 @@ import { useParams } from 'next/navigation';
 import AuthGuard from '@/components/AuthGuard';
 import { visitApi } from '@/lib/api';
 import { Visit } from '@/types/clinical.types';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
 export default function VisitDetailPage() {
     const params = useParams();
     const visitId = params.id as string;
+    const { user } = useAuth();
 
     const [visit, setVisit] = useState<Visit | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Determine back link based on user role
+    const backLink = user?.role === 'patient' ? '/patient/reports' : '/doctor/reports';
 
     useEffect(() => {
         const fetchVisit = async () => {
@@ -90,7 +95,7 @@ export default function VisitDetailPage() {
                     <div className="max-w-3xl mx-auto">
                         {/* Back Button */}
                         <Link
-                            href="/doctor/reports"
+                            href={backLink}
                             className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 mb-6 transition-colors"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

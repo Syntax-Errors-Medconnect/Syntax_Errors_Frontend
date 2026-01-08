@@ -63,7 +63,20 @@ export default function BookAppointmentPage() {
         setError(null);
 
         try {
-            await appointmentApi.createAppointment(selectedDoctor, requestedDate, requestedTime, message);
+            // Combine date and time into a proper DateTime
+            let appointmentDateTime;
+            if (requestedTime) {
+                // Combine date and time: "2026-01-08" + "14:30" = "2026-01-08T14:30"
+                appointmentDateTime = `${requestedDate}T${requestedTime}:00`;
+            } else {
+                // If no time provided, use current time
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                appointmentDateTime = `${requestedDate}T${hours}:${minutes}:00`;
+            }
+
+            await appointmentApi.createAppointment(selectedDoctor, appointmentDateTime, requestedTime, message);
             setSuccessMessage('Appointment request sent successfully!');
 
             // Redirect after showing success

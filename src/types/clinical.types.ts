@@ -23,15 +23,28 @@ export interface Visit {
     doctorId: string;
     doctorName: string;
     visitDate: string;
-    summary: string;
+    visitTime?: string;
+    reason?: string;
+    diagnosis?: string;
+    solution?: string;
+    medicinePrescribed?: string;
+    fullSummary?: string;
+    // Legacy field for backwards compatibility
+    summary?: string;
     createdAt: string;
     updatedAt: string;
 }
 
 export interface CreateVisitData {
     patientId: string;
+    patientName: string;
     visitDate: string;
-    summary: string;
+    visitTime?: string;
+    reason: string;
+    diagnosis?: string;
+    solution: string;
+    medicinePrescribed?: string;
+    fullSummary: string;
 }
 
 export interface AISearchResult {

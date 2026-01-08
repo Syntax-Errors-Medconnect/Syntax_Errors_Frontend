@@ -1,14 +1,12 @@
 'use client';
 
 import AuthGuard from '@/components/AuthGuard';
-import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { visitApi } from '@/lib/api';
 import { Visit } from '@/types/clinical.types';
 
-export default function SummariesPage() {
-    const { user } = useAuth();
+export default function ReportsPage() {
     const [visits, setVisits] = useState<Visit[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -20,7 +18,7 @@ export default function SummariesPage() {
                     setVisits(response.data.data.visits);
                 }
             } catch (err) {
-                console.error('Error fetching visits:', err);
+                console.error('Error fetching reports:', err);
             } finally {
                 setIsLoading(false);
             }
@@ -37,9 +35,9 @@ export default function SummariesPage() {
                         {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                             <div>
-                                <h1 className="text-2xl font-bold text-slate-800">Visit Summaries</h1>
+                                <h1 className="text-2xl font-bold text-slate-800">Patient Reports</h1>
                                 <p className="text-slate-500 mt-1">
-                                    {visits.length} summar{visits.length !== 1 ? 'ies' : 'y'} created
+                                    {visits.length} report{visits.length !== 1 ? 's' : ''} created
                                 </p>
                             </div>
                             <Link
@@ -49,11 +47,11 @@ export default function SummariesPage() {
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
-                                Create Summary
+                                Create Report
                             </Link>
                         </div>
 
-                        {/* Summaries List */}
+                        {/* Reports List */}
                         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                             {isLoading ? (
                                 <div className="flex items-center justify-center py-12">
@@ -64,8 +62,8 @@ export default function SummariesPage() {
                                     <svg className="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                                     </svg>
-                                    <h3 className="text-lg font-semibold text-slate-800 mb-1">No summaries yet</h3>
-                                    <p className="text-slate-500 mb-4">Create your first visit summary to get started</p>
+                                    <h3 className="text-lg font-semibold text-slate-800 mb-1">No reports yet</h3>
+                                    <p className="text-slate-500 mb-4">Create your first patient report to get started</p>
                                     <Link
                                         href="/create-visit"
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700"
@@ -73,7 +71,7 @@ export default function SummariesPage() {
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                         </svg>
-                                        Create Summary
+                                        Create Report
                                     </Link>
                                 </div>
                             ) : (
@@ -91,7 +89,7 @@ export default function SummariesPage() {
                                                 <div>
                                                     <p className="font-semibold text-slate-800">{visit.patientName}</p>
                                                     <p className="text-sm text-slate-500">
-                                                        Visit: {new Date(visit.visitDate).toLocaleDateString('en-US', {
+                                                        {new Date(visit.visitDate).toLocaleDateString('en-US', {
                                                             month: 'long',
                                                             day: 'numeric',
                                                             year: 'numeric',

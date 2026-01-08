@@ -13,7 +13,13 @@ interface Visit {
     doctorId: string;
     doctorName: string;
     visitDate: string;
-    summary: string;
+    visitTime?: string;
+    reason?: string;
+    diagnosis?: string;
+    solution?: string;
+    medicinePrescribed?: string;
+    fullSummary?: string;
+    summary?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -163,7 +169,7 @@ export default function PatientTimelinePage({
                                                                 </span>
                                                             </div>
                                                             <p className="text-slate-700 line-clamp-3">
-                                                                {visit.summary}
+                                                                {visit.reason || visit.fullSummary || visit.summary || 'No details available'}
                                                             </p>
                                                         </div>
                                                         <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

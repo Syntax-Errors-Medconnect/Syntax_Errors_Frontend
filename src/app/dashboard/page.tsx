@@ -402,51 +402,7 @@ export default function DashboardPage() {
                                 ) : user?.role === 'patient' && (pendingAppointments.length === 0 && approvedAppointments.length === 0) ? (
                                     // Patient view with no appointments - show quick actions
                                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-                                        <div className="px-5 py-4 border-b border-slate-100">
-                                            <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                                                <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                Quick Actions
-                                            </h3>
-                                        </div>
-                                        <div className="p-5 space-y-3">
-                                            <Link
-                                                href="/patient/doctors"
-                                                className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 hover:bg-violet-50 transition-colors group"
-                                            >
-                                                <div className="w-10 h-10 bg-violet-100 group-hover:bg-violet-200 rounded-lg flex items-center justify-center transition-colors">
-                                                    <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    </svg>
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-slate-800 group-hover:text-violet-700 transition-colors">Browse Doctors</p>
-                                                    <p className="text-sm text-slate-500">Find and connect with healthcare professionals</p>
-                                                </div>
-                                                <svg className="w-5 h-5 text-slate-400 group-hover:text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </Link>
 
-                                            <Link
-                                                href="/patient/book-appointment"
-                                                className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors group"
-                                            >
-                                                <div className="w-10 h-10 bg-emerald-100 group-hover:bg-emerald-200 rounded-lg flex items-center justify-center transition-colors">
-                                                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                                    </svg>
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-slate-800 group-hover:text-emerald-700 transition-colors">Book Appointment</p>
-                                                    <p className="text-sm text-slate-500">Schedule a visit with a doctor</p>
-                                                </div>
-                                                <svg className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </Link>
-                                        </div>
                                     </div>
                                 ) : (
                                     // Show recent appointments for doctors and patients with appointments

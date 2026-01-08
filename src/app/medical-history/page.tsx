@@ -1123,7 +1123,7 @@ export default function ProfilePage() {
                                 </div>
                                 <div>
                                   <label className="block text-xs font-medium text-slate-700 mb-1">
-                                    Document URL *
+                                    Document URL (add the link to the document) *
                                   </label>
                                   <input
                                     type="url"

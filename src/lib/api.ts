@@ -388,12 +388,12 @@ export const videoCallApi = {
         }>('/api/video-calls/start', { videoCallId }),
 
     // End video call
-    endCall: (videoCallId: string) =>
+    endCall: (videoCallId: string, transcription?: any[]) =>
         api.put<{
             success: boolean;
             message: string;
             data: { videoCall: any };
-        }>(`/api/video-calls/${videoCallId}/end`),
+        }>(`/api/video-calls/${videoCallId}/end`, { transcription }),
 
     // Get video call by appointment ID
     getCallByAppointment: (appointmentId: string) =>

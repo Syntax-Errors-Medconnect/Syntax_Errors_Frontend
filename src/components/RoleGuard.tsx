@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 
 interface RoleGuardProps {
     children: React.ReactNode;
-    allowedRoles: ('doctor' | 'patient')[];
+    allowedRoles: ('doctor' | 'patient' | 'admin')[];
     fallbackPath?: string;
 }
 

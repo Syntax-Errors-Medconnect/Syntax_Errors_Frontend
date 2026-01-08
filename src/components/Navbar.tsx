@@ -69,16 +69,18 @@ export default function Navbar() {
                             <div className="w-5 h-5 border-2 border-violet-600 border-t-transparent rounded-full animate-spin" />
                         ) : isAuthenticated ? (
                             <>
-                                {/* Navigation Links */}
-                                <Link
-                                    href="/dashboard"
-                                    className={`hidden sm:block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/dashboard'
-                                        ? 'bg-violet-50 text-violet-700'
-                                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                                        }`}
-                                >
-                                    Dashboard
-                                </Link>
+                                {/* Navigation Links - Dashboard (hide for admin) */}
+                                {user?.role !== 'admin' && (
+                                    <Link
+                                        href="/dashboard"
+                                        className={`hidden sm:block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/dashboard'
+                                            ? 'bg-violet-50 text-violet-700'
+                                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                                            }`}
+                                    >
+                                        Dashboard
+                                    </Link>
+                                )}
 
                                 {/* Doctor-specific links */}
                                 {user?.role === 'doctor' && (
@@ -132,6 +134,22 @@ export default function Navbar() {
                                             Chat
                                         </Link>
                                     </>
+                                )}
+
+                                {/* Admin-specific links */}
+                                {user?.role === 'admin' && (
+                                    <Link
+                                        href="/admin/doctors"
+                                        className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/admin/doctors'
+                                            ? 'bg-violet-50 text-violet-700'
+                                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                                            }`}
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Manage Doctors
+                                    </Link>
                                 )}
 
                                 {/* Patient-specific links */}

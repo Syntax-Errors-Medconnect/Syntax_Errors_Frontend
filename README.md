@@ -33,6 +33,26 @@ A modern, responsive healthcare management web application built with Next.js 16
 - **Secure Communication**: HTTPS-ready with secure token handling
 - **Modern UI**: Tailwind CSS 4 with gradient designs and animations
 
+## 🏗️ Architecture Overview
+
+The MedConnect platform follows a modern, scalable architecture designed for healthcare applications. The system is built with a clear separation of concerns, utilizing Next.js for the frontend and Node.js/Express for the backend, with MongoDB as the database layer.
+
+![Architecture Diagram](./architecture-diagram.jpeg)
+
+### Key Components
+
+- **Frontend Layer**: Next.js 16 with React 19, TypeScript, and Tailwind CSS
+- **API Gateway**: RESTful API with Express.js and JWT authentication
+- **Service Layer**: Modular controllers for appointments, video calls, chat, and medical records
+- **Data Layer**: MongoDB with Mongoose ODM for data persistence
+- **External Services**: 
+  - Agora.io for video/audio communication
+  - Brevo for email notifications
+  - Google OAuth for authentication
+  - AI services for clinical summaries
+
+For detailed backend architecture, see the [backend documentation](../b2b-backend/README.md).
+
 ## 📋 Prerequisites
 
 - **Node.js** >= 18.0.0

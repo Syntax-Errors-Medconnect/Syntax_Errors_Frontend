@@ -67,10 +67,12 @@ function VideoCallContent() {
         initializeCall();
     }, [appointmentId]);
 
-    const handleCallEnd = async () => {
+    const handleCallEnd = async (transcription?: any[]) => {
         if (callData?.videoCallId) {
             try {
-                await videoCallApi.endCall(callData.videoCallId);
+                // Send transcription to backend
+                await videoCallApi.endCall(callData.videoCallId, transcription);
+                console.log(`✅ Call ended, transcription saved: ${transcription?.length || 0} segments`);
             } catch (error) {
                 console.error('Error ending call:', error);
             }

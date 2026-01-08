@@ -12,7 +12,7 @@ interface VideoCallRoomProps {
     channelName: string;
     token: string;
     uid: string;
-    onCallEnd: () => void;
+    onCallEnd: (transcription?: any[]) => void; // Pass transcription when ending
 }
 
 export default function VideoCallRoom({
@@ -26,12 +26,16 @@ export default function VideoCallRoom({
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [remoteUsers, setRemoteUsers] = useState<number[]>([]);
+    const [transcription, setTranscription] = useState<string[]>([]); // Live captions
 
     const clientRef = useRef<IAgoraRTCClient | null>(null);
     const localVideoTrackRef = useRef<ICameraVideoTrack | null>(null);
     const localAudioTrackRef = useRef<IMicrophoneAudioTrack | null>(null);
     const localVideoRef = useRef<HTMLDivElement>(null);
     const isMountedRef = useRef(true);
+    const transcriptDataRef = useRef<any[]>([]); // Store full transcript
+    const recognitionRef = useRef<any>(null); // Speech recognition instance
+    const callStartTimeRef = useRef<number>(0); // Track call start time for timestamps
 
     useEffect(() => {
         let isInitializing = true;
@@ -168,6 +172,10 @@ export default function VideoCallRoom({
 
                 if (isMountedRef.current) {
                     setIsJoined(true);
+                    callStartTimeRef.current = Date.now();
+
+                    // Start speech recognition for transcription
+                    startSpeechRecognition();
                 }
 
                 isInitializing = false;
@@ -205,6 +213,70 @@ export default function VideoCallRoom({
         };
     }, [appId, channelName, token, uid]);
 
+    // Speech Recognition for Transcription
+    const startSpeechRecognition = () => {
+        try {
+            // Check if browser supports Speech Recognition
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                console.warn('⚠️ Speech Recognition not supported in this browser');
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event: any) => {
+                const transcript = event.results[event.results.length - 1][0].transcript;
+                const timestamp = Math.floor((Date.now() - callStartTimeRef.current) / 1000);
+
+                console.log(`📝 Transcription: "${transcript}" at ${timestamp}s`);
+
+                // Store transcript
+                transcriptDataRef.current.push({
+                    timestamp,
+                    speaker: 'local', // We'll identify speaker later
+                    text: transcript.trim(),
+                });
+
+                // Update live captions
+                setTranscription(prev => [...prev.slice(-4), transcript.trim()]);
+            };
+
+            recognition.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'no-speech') {
+                    // Restart if no speech detected
+                    recognition.start();
+                }
+            };
+
+            recognition.onend = () => {
+                // Restart recognition if call is still ongoing
+                if (isMountedRef.current && isJoined) {
+                    recognition.start();
+                }
+            };
+
+            recognition.start();
+            recognitionRef.current = recognition;
+            console.log('🎤 Speech recognition started');
+        } catch (error) {
+            console.error('Failed to start speech recognition:', error);
+        }
+    };
+
+    const stopSpeechRecognition = () => {
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+            recognitionRef.current = null;
+            console.log('🛑 Speech recognition stopped');
+        }
+    };
+
     const toggleMute = () => {
         if (localAudioTrackRef.current) {
             localAudioTrackRef.current.setEnabled(isMuted);
@@ -220,10 +292,17 @@ export default function VideoCallRoom({
     };
 
     const handleEndCall = async () => {
+        // Stop speech recognition
+        stopSpeechRecognition();
+
+        // Close tracks and leave channel
         localVideoTrackRef.current?.close();
         localAudioTrackRef.current?.close();
         await clientRef.current?.leave();
-        onCallEnd();
+
+        // Pass transcription to parent
+        console.log(`📊 Ending call with ${transcriptDataRef.current.length} transcript segments`);
+        onCallEnd(transcriptDataRef.current);
     };
 
     return (

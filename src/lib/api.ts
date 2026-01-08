@@ -110,6 +110,10 @@ export const visitApi = {
     // Get all visits created by doctor
     getDoctorVisits: () => api.get<VisitListResponse>('/api/doctor/visits'),
 
+    // Get visits for a specific patient (doctor only)
+    getPatientVisits: (patientId: string) =>
+        api.get<VisitListResponse>(`/api/doctor/patients/${patientId}/visits`),
+
     // Get single visit by ID
     getVisitById: (visitId: string) =>
         api.get<VisitDetailResponse>(`/api/visit-summary/${visitId}`),

@@ -300,7 +300,7 @@ export default function DoctorChatPage() {
                                             <div
                                                 className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user'
                                                     ? 'bg-indigo-600 text-white'
-                                                    : 'bg-white border border-slate-200 text-slate-800'
+                                                    : 'bg-white border border-slate-200 text-black'
                                                     }`}
                                             >
                                                 <p className="whitespace-pre-wrap">{message.content}</p>
@@ -341,7 +341,7 @@ export default function DoctorChatPage() {
                                             value={inputMessage}
                                             onChange={(e) => setInputMessage(e.target.value)}
                                             placeholder={`Ask about ${selectedPatient?.name}'s reports...`}
-                                            className="flex-1 px-4 py-3 rounded-xl bg-slate-100 border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+                                            className="flex-1 px-4 py-3 rounded-xl bg-slate-100 border border-slate-200 text-black focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
                                             disabled={isSending}
                                         />
                                         <button

@@ -475,8 +475,7 @@ export default function ProfilePage() {
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                           Condition Type *
                         </label>
-                        <input
-                          type="text"
+                        <select
                           value={formData.conditionType}
                           onChange={(e) =>
                             setFormData({
@@ -485,9 +484,14 @@ export default function ProfilePage() {
                             })
                           }
                           className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          placeholder="e.g., Injury, Disease, Chronic"
-                          required
-                        />
+                        >
+                          <option value="Injury">Injury</option>
+                          <option value="Disease">Illness</option>
+                          <option value="Chronic">Chronic</option>
+                          <option value="Allergy">Allergy</option>
+                          <option value="Surgery">Surgery</option>
+                          <option value="Other">Other</option>
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -512,9 +516,22 @@ export default function ProfilePage() {
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                           Diagnosed On *
                         </label>
+                        {/* <input
+                          type="date"
+                          value={formData.diagnosedOn}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              diagnosedOn: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          required
+                        /> */}
                         <input
                           type="date"
                           value={formData.diagnosedOn}
+                          max={new Date().toISOString().split("T")[0]}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -631,7 +648,19 @@ export default function ProfilePage() {
                           </h4>
                           <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                              const hasEmpty = formData.treatments.some((t) =>
+                                (t.type || "") === "" &&
+                                (t.medicineName || "") === "" &&
+                                (t.dosage || "") === "" &&
+                                (t.frequency || "") === "" &&
+                                (t.duration || "") === "" &&
+                                (t.procedureName || "") === "" &&
+                                (t.notes || "") === "" &&
+                                (t.startedOn || "") === "" &&
+                                (t.endedOn || "") === ""
+                              );
+                              if (hasEmpty) return;
                               setFormData({
                                 ...formData,
                                 treatments: [
@@ -648,8 +677,8 @@ export default function ProfilePage() {
                                     endedOn: "",
                                   },
                                 ],
-                              })
-                            }
+                              });
+                            }}
                             className="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                           >
                             + Add Treatment
@@ -895,7 +924,14 @@ export default function ProfilePage() {
                           </h4>
                           <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                              const hasEmpty = formData.followUps.some(
+                                (f) =>
+                                  (f.date || "") === "" &&
+                                  (f.notes || "") === "" &&
+                                  (f.nextVisit || "") === ""
+                              );
+                              if (hasEmpty) return;
                               setFormData({
                                 ...formData,
                                 followUps: [
@@ -906,8 +942,8 @@ export default function ProfilePage() {
                                     nextVisit: "",
                                   },
                                 ],
-                              })
-                            }
+                              });
+                            }}
                             className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                           >
                             + Add Follow-up
@@ -1016,7 +1052,11 @@ export default function ProfilePage() {
                           </h4>
                           <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                              const hasEmpty = formData.documents.some(
+                                (d) => (d.type || "") === "" && (d.url || "") === ""
+                              );
+                              if (hasEmpty) return;
                               setFormData({
                                 ...formData,
                                 documents: [
@@ -1026,8 +1066,8 @@ export default function ProfilePage() {
                                     url: "",
                                   },
                                 ],
-                              })
-                            }
+                              });
+                            }}
                             className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                           >
                             + Add Document

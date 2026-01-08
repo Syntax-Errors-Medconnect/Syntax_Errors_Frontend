@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { appointmentApi } from '@/lib/api';
+import { formatDateIST, formatTime12Hour } from '@/lib/dateUtils';
 import AuthGuard from '@/components/AuthGuard';
 import RoleGuard from '@/components/RoleGuard';
 import Link from 'next/link';
@@ -16,6 +17,7 @@ interface Appointment {
     doctorName: string;
     status: string;
     requestedDate: string;
+    requestedTime?: string;
     message: string;
     createdAt: string;
 }
@@ -200,12 +202,12 @@ export default function DoctorAppointmentsPage() {
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
-                                                    {new Date(apt.requestedDate).toLocaleDateString('en-US', {
-                                                        weekday: 'short',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        year: 'numeric',
-                                                    })}
+                                                    {formatDateIST(apt.requestedDate)}
+                                                    {apt.requestedTime && (
+                                                        <span className="ml-1 text-blue-600 font-medium">
+                                                            at {formatTime12Hour(apt.requestedTime)}
+                                                        </span>
+                                                    )}
                                                 </div>
 
                                                 {apt.message && (
@@ -248,6 +250,7 @@ export default function DoctorAppointmentsPage() {
                                                         <StartVideoCallButton
                                                             appointmentId={apt._id}
                                                             status={apt.status}
+                                                            requestedDate={apt.requestedDate}
                                                             className="w-full"
                                                         />
                                                     </div>

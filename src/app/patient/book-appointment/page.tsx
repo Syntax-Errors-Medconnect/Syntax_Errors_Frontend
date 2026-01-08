@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { visitApi, appointmentApi } from '@/lib/api';
+import { getTomorrowDateIST } from '@/lib/dateUtils';
 import AuthGuard from '@/components/AuthGuard';
 import RoleGuard from '@/components/RoleGuard';
 import Link from 'next/link';
@@ -26,6 +27,7 @@ export default function BookAppointmentPage() {
     // Form state
     const [selectedDoctor, setSelectedDoctor] = useState<string>('');
     const [requestedDate, setRequestedDate] = useState<string>('');
+    const [requestedTime, setRequestedTime] = useState<string>('');
     const [message, setMessage] = useState<string>('');
 
     useEffect(() => {
@@ -45,10 +47,8 @@ export default function BookAppointmentPage() {
 
         fetchDoctors();
 
-        // Set default date to tomorrow
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        setRequestedDate(tomorrow.toISOString().split('T')[0]);
+        // Set default date to tomorrow (IST)
+        setRequestedDate(getTomorrowDateIST());
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +63,20 @@ export default function BookAppointmentPage() {
         setError(null);
 
         try {
-            await appointmentApi.createAppointment(selectedDoctor, requestedDate, message);
+            // Combine date and time into a proper DateTime
+            let appointmentDateTime;
+            if (requestedTime) {
+                // Combine date and time: "2026-01-08" + "14:30" = "2026-01-08T14:30"
+                appointmentDateTime = `${requestedDate}T${requestedTime}:00`;
+            } else {
+                // If no time provided, use current time
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                appointmentDateTime = `${requestedDate}T${hours}:${minutes}:00`;
+            }
+
+            await appointmentApi.createAppointment(selectedDoctor, appointmentDateTime, requestedTime, message);
             setSuccessMessage('Appointment request sent successfully!');
 
             // Redirect after showing success
@@ -218,6 +231,19 @@ export default function BookAppointmentPage() {
                                         value={requestedDate}
                                         onChange={(e) => setRequestedDate(e.target.value)}
                                         min={new Date().toISOString().split('T')[0]}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                    />
+                                </div>
+
+                                {/* Time Selection */}
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Preferred Time (Optional)
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={requestedTime}
+                                        onChange={(e) => setRequestedTime(e.target.value)}
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                                     />
                                 </div>

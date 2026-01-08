@@ -4,6 +4,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { useAuth } from '@/context/AuthContext';
 import { useState, useEffect } from 'react';
 import { appointmentApi, visitApi, authApi } from '@/lib/api';
+import { formatDateShortIST } from '@/lib/dateUtils';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
 
@@ -52,7 +53,8 @@ export default function DashboardPage() {
         if (hour >= 17) greetingText = 'Evening';
         setGreeting(greetingText);
 
-        const dateStr = new Date().toLocaleDateString('en-US', {
+        const dateStr = new Date().toLocaleDateString('en-IN', {
+            timeZone: 'Asia/Kolkata',
             weekday: 'long',
             month: 'long',
             day: 'numeric',
@@ -341,7 +343,7 @@ export default function DashboardPage() {
                                                     <p className="text-sm text-slate-500">Member Since</p>
                                                     <p className="font-medium text-slate-800">
                                                         {user?.createdAt
-                                                            ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                                                            ? new Date(user.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', month: 'long', year: 'numeric' })
                                                             : 'Recently joined'}
                                                     </p>
                                                 </div>
@@ -432,7 +434,7 @@ export default function DashboardPage() {
                                                                         {user?.role === 'doctor' ? apt.patientName : `Dr. ${apt.doctorName}`}
                                                                     </p>
                                                                     <p className="text-sm text-slate-500">
-                                                                        {new Date(apt.requestedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                                        {formatDateShortIST(apt.requestedDate)}
                                                                     </p>
                                                                 </div>
                                                                 <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
@@ -481,7 +483,7 @@ export default function DashboardPage() {
                                                                         {user?.role === 'doctor' ? apt.patientName : `Dr. ${apt.doctorName}`}
                                                                     </p>
                                                                     <p className="text-sm text-slate-500">
-                                                                        {new Date(apt.requestedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                                        {formatDateShortIST(apt.requestedDate)}
                                                                     </p>
                                                                 </div>
                                                                 <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">

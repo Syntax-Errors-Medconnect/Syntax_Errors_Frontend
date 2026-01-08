@@ -3,6 +3,7 @@
 import AuthGuard from '@/components/AuthGuard';
 import { useState, useEffect } from 'react';
 import { appointmentApi } from '@/lib/api';
+import { formatDateIST, formatTime12Hour } from '@/lib/dateUtils';
 import Link from 'next/link';
 import StartVideoCallButton from '@/components/StartVideoCallButton';
 
@@ -12,6 +13,7 @@ interface Appointment {
     doctorName: string;
     status: string;
     requestedDate: string;
+    requestedTime?: string;
     message: string;
     createdAt: string;
 }
@@ -174,12 +176,12 @@ export default function MyAppointmentsPage() {
                                                 <div className="flex-1">
                                                     <h3 className="font-semibold text-lg text-slate-800">Dr. {appointment.doctorName}</h3>
                                                     <p className="text-sm text-slate-500">
-                                                        {new Date(appointment.requestedDate).toLocaleDateString('en-US', {
-                                                            weekday: 'short',
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                            year: 'numeric',
-                                                        })}
+                                                        {formatDateIST(appointment.requestedDate)}
+                                                        {appointment.requestedTime && (
+                                                            <span className="ml-2 text-blue-600 font-medium">
+                                                                at {formatTime12Hour(appointment.requestedTime)}
+                                                            </span>
+                                                        )}
                                                     </p>
                                                 </div>
 
@@ -205,6 +207,7 @@ export default function MyAppointmentsPage() {
                                                     <StartVideoCallButton
                                                         appointmentId={appointment._id}
                                                         status={appointment.status}
+                                                        requestedDate={appointment.requestedDate}
                                                         className="w-full text-sm"
                                                     />
                                                 </div>

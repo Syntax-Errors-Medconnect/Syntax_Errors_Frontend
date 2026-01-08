@@ -176,8 +176,9 @@ export const appointmentApi = {
     createAppointment: (
         doctorId: string,
         requestedDate: string,
+        requestedTime?: string,
         message?: string
-    ) => api.post("/api/appointments", { doctorId, requestedDate, message }),
+    ) => api.post("/api/appointments", { doctorId, requestedDate, requestedTime, message }),
 
     // Get doctor's appointments (doctor only)
     getDoctorAppointments: (status?: string) =>
@@ -388,12 +389,12 @@ export const videoCallApi = {
         }>('/api/video-calls/start', { videoCallId }),
 
     // End video call
-    endCall: (videoCallId: string) =>
+    endCall: (videoCallId: string, transcription?: any[]) =>
         api.put<{
             success: boolean;
             message: string;
             data: { videoCall: any };
-        }>(`/api/video-calls/${videoCallId}/end`),
+        }>(`/api/video-calls/${videoCallId}/end`, { transcription }),
 
     // Get video call by appointment ID
     getCallByAppointment: (appointmentId: string) =>

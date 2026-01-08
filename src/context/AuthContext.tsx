@@ -13,6 +13,7 @@ interface AuthContextType {
     login: (credentials: LoginCredentials) => Promise<void>;
     register: (credentials: RegisterCredentials) => Promise<void>;
     logout: () => Promise<void>;
+    refreshUser: () => Promise<void>;
     clearError: () => void;
 }
 
@@ -96,6 +97,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const clearError = () => setError(null);
 
+    const refreshUser = async () => {
+        try {
+            const response = await authApi.getMe();
+            if (response.data.success) {
+                setUser(response.data.data.user);
+            }
+        } catch (err) {
+            console.error('Error refreshing user:', err);
+        }
+    };
+
     const value: AuthContextType = {
         user,
         isAuthenticated: !!user,
@@ -104,6 +116,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         login,
         register,
         logout,
+        refreshUser,
         clearError,
     };
 

@@ -3,8 +3,9 @@
 import AuthGuard from '@/components/AuthGuard';
 import { useAuth } from '@/context/AuthContext';
 import { useState, useEffect } from 'react';
-import { appointmentApi, visitApi } from '@/lib/api';
+import { appointmentApi, visitApi, authApi } from '@/lib/api';
 import Link from 'next/link';
+import { AxiosError } from 'axios';
 
 interface Appointment {
     _id: string;
@@ -20,9 +21,13 @@ interface Appointment {
 }
 
 export default function DashboardPage() {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState('');
+    const [saveSuccess, setSaveSuccess] = useState(false);
     const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>([]);
     const [approvedAppointments, setApprovedAppointments] = useState<Appointment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +38,9 @@ export default function DashboardPage() {
     useEffect(() => {
         if (user?.name) {
             setName(user.name);
+        }
+        if (user?.email) {
+            setEmail(user.email);
         }
     }, [user]);
 
@@ -99,8 +107,54 @@ export default function DashboardPage() {
         }
     }, [user]);
 
-    const handleSaveProfile = () => {
-        // TODO: Implement profile update API
+    const handleSaveProfile = async () => {
+        try {
+            // Clear previous messages
+            setSaveError('');
+            setSaveSuccess(false);
+
+            // Validate
+            if (!name.trim()) {
+                setSaveError('Name cannot be empty');
+                return;
+            }
+
+            if (!email.trim()) {
+                setSaveError('Email cannot be empty');
+                return;
+            }
+
+            setIsSaving(true);
+
+            // Call API to update profile
+            await authApi.updateProfile({ name: name.trim(), email: email.trim() });
+
+            // Refresh user data from server
+            await refreshUser();
+
+            // Show success message
+            setSaveSuccess(true);
+
+            // Close edit mode after a brief delay
+            setTimeout(() => {
+                setIsEditing(false);
+                setSaveSuccess(false);
+            }, 1500);
+        } catch (err) {
+            const error = err as AxiosError<{ message: string }>;
+            const message = error.response?.data?.message || 'Failed to update profile';
+            setSaveError(message);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        // Reset to original values
+        setName(user?.name || '');
+        setEmail(user?.email || '');
+        setSaveError('');
+        setSaveSuccess(false);
         setIsEditing(false);
     };
 
@@ -206,25 +260,72 @@ export default function DashboardPage() {
                                     <div className="p-6 space-y-4">
                                         {isEditing ? (
                                             <div className="space-y-3">
+                                                {/* Error message */}
+                                                {saveError && (
+                                                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                                        <p className="text-sm text-red-700 flex items-center gap-2">
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            {saveError}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Success message */}
+                                                {saveSuccess && (
+                                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                                        <p className="text-sm text-green-700 flex items-center gap-2">
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            Profile updated successfully!
+                                                        </p>
+                                                    </div>
+                                                )}
+
                                                 <div>
                                                     <label className="text-sm text-slate-500">Name</label>
                                                     <input
                                                         type="text"
                                                         value={name}
                                                         onChange={(e) => setName(e.target.value)}
-                                                        className="w-full mt-1 px-3 py-2 border border-slate-200 text-slate-800 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                                        disabled={isSaving}
+                                                        className="w-full mt-1 px-3 py-2 border border-slate-200 text-slate-800 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="text-sm text-slate-500">Email</label>
+                                                    <input
+                                                        type="email"
+                                                        value={email}
+                                                        onChange={(e) => setEmail(e.target.value)}
+                                                        disabled={isSaving}
+                                                        className="w-full mt-1 px-3 py-2 border border-slate-200 text-slate-800 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
                                                     />
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={handleSaveProfile}
-                                                        className="flex-1 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700"
+                                                        disabled={isSaving}
+                                                        className="flex-1 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 disabled:bg-violet-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                                     >
-                                                        Save
+                                                        {isSaving ? (
+                                                            <>
+                                                                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                                </svg>
+                                                                Saving...
+                                                            </>
+                                                        ) : (
+                                                            'Save'
+                                                        )}
                                                     </button>
                                                     <button
-                                                        onClick={() => setIsEditing(false)}
-                                                        className="flex-1 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200"
+                                                        onClick={handleCancelEdit}
+                                                        disabled={isSaving}
+                                                        className="flex-1 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 disabled:bg-slate-50 disabled:cursor-not-allowed"
                                                     >
                                                         Cancel
                                                     </button>

@@ -85,13 +85,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const logout = async () => {
         try {
-            setIsLoading(true);
             await authApi.logout();
-            setUser(null);
         } catch (err) {
             console.error('Logout error:', err);
         } finally {
-            setIsLoading(false);
+            // Always clear user state regardless of API success
+            setUser(null);
         }
     };
 

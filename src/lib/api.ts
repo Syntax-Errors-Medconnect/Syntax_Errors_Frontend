@@ -176,8 +176,9 @@ export const appointmentApi = {
     createAppointment: (
         doctorId: string,
         requestedDate: string,
+        requestedTime?: string,
         message?: string
-    ) => api.post("/api/appointments", { doctorId, requestedDate, message }),
+    ) => api.post("/api/appointments", { doctorId, requestedDate, requestedTime, message }),
 
     // Get doctor's appointments (doctor only)
     getDoctorAppointments: (status?: string) =>

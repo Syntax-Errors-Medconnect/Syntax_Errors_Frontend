@@ -26,6 +26,7 @@ export default function BookAppointmentPage() {
     // Form state
     const [selectedDoctor, setSelectedDoctor] = useState<string>('');
     const [requestedDate, setRequestedDate] = useState<string>('');
+    const [requestedTime, setRequestedTime] = useState<string>('');
     const [message, setMessage] = useState<string>('');
 
     useEffect(() => {
@@ -63,7 +64,7 @@ export default function BookAppointmentPage() {
         setError(null);
 
         try {
-            await appointmentApi.createAppointment(selectedDoctor, requestedDate, message);
+            await appointmentApi.createAppointment(selectedDoctor, requestedDate, requestedTime, message);
             setSuccessMessage('Appointment request sent successfully!');
 
             // Redirect after showing success
@@ -218,6 +219,19 @@ export default function BookAppointmentPage() {
                                         value={requestedDate}
                                         onChange={(e) => setRequestedDate(e.target.value)}
                                         min={new Date().toISOString().split('T')[0]}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                    />
+                                </div>
+
+                                {/* Time Selection */}
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Preferred Time (Optional)
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={requestedTime}
+                                        onChange={(e) => setRequestedTime(e.target.value)}
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                                     />
                                 </div>

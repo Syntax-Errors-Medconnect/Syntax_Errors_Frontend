@@ -131,38 +131,36 @@ export default function MyAppointmentsPage() {
                                     </Link>
                                 </div>
                             ) : (
-                                <div className="divide-y divide-slate-100">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                                     {appointments.map((appointment) => (
                                         <div
                                             key={appointment._id}
-                                            className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors"
+                                            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
                                         >
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            <div className="flex flex-col items-center text-center">
+                                                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4">
                                                     {appointment.doctorName?.charAt(0).toUpperCase() || 'D'}
                                                 </div>
-                                                <div>
-                                                    <p className="font-semibold text-slate-800">Dr. {appointment.doctorName}</p>
-                                                    <p className="text-sm text-slate-500">
-                                                        {new Date(appointment.requestedDate).toLocaleDateString('en-US', {
-                                                            weekday: 'short',
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                            year: 'numeric',
-                                                        })}
-                                                    </p>
-                                                    {appointment.message && (
-                                                        <p className="text-xs text-slate-400 mt-1 truncate max-w-[200px]">
-                                                            {appointment.message}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium capitalize ${getStatusColor(appointment.status)}`}>
+                                                <h3 className="font-semibold text-lg text-slate-800 mb-2">Dr. {appointment.doctorName}</h3>
+                                                <p className="text-sm text-slate-500 mb-3">
+                                                    {new Date(appointment.requestedDate).toLocaleDateString('en-US', {
+                                                        weekday: 'short',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        year: 'numeric',
+                                                    })}
+                                                </p>
+
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium capitalize mb-4 ${getStatusColor(appointment.status)}`}>
                                                     {getStatusIcon(appointment.status)}
                                                     {appointment.status}
                                                 </span>
+
+                                                {appointment.message && (
+                                                    <p className="text-xs text-slate-600 bg-slate-50 rounded-lg p-3 border border-slate-100 w-full line-clamp-2">
+                                                        {appointment.message}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
                                     ))}

@@ -117,8 +117,8 @@ export default function DoctorAppointmentsPage() {
                                         key={tab}
                                         onClick={() => setFilter(tab)}
                                         className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === tab
-                                                ? 'bg-blue-600 text-white shadow-sm'
-                                                : 'text-slate-600 hover:bg-slate-100'
+                                            ? 'bg-blue-600 text-white shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100'
                                             }`}
                                     >
                                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -152,70 +152,71 @@ export default function DoctorAppointmentsPage() {
                                         <p className="text-sm text-slate-400 mt-1">Appointment requests will appear here</p>
                                     </div>
                                 ) : (
-                                    <div className="divide-y divide-slate-100">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
                                         {appointments.map((apt) => (
-                                            <div key={apt._id} className="p-6 hover:bg-slate-50 transition-colors">
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
-                                                            {apt.patientName.charAt(0).toUpperCase()}
-                                                        </div>
-                                                        <div>
-                                                            <h3 className="font-semibold text-slate-800">{apt.patientName}</h3>
-                                                            <p className="text-sm text-slate-500">{apt.patientEmail}</p>
-                                                            <div className="flex items-center gap-3 mt-2">
-                                                                <span className="text-sm text-slate-600 flex items-center gap-1">
-                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                                    </svg>
-                                                                    {new Date(apt.requestedDate).toLocaleDateString('en-US', {
-                                                                        weekday: 'short',
-                                                                        month: 'short',
-                                                                        day: 'numeric',
-                                                                        year: 'numeric',
-                                                                    })}
-                                                                </span>
-                                                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(apt.status)}`}>
-                                                                    {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
-                                                                </span>
-                                                            </div>
-                                                            {apt.message && (
-                                                                <p className="text-sm text-slate-600 mt-2 bg-slate-50 rounded-lg p-3 border border-slate-100">
-                                                                    "{apt.message}"
-                                                                </p>
-                                                            )}
-                                                        </div>
+                                            <div
+                                                key={apt._id}
+                                                className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+                                            >
+                                                <div className="flex items-start gap-4 mb-4">
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
+                                                        {apt.patientName.charAt(0).toUpperCase()}
                                                     </div>
-
-                                                    {apt.status === 'pending' && (
-                                                        <div className="flex items-center gap-2 sm:flex-shrink-0">
-                                                            <button
-                                                                onClick={() => handleAccept(apt._id)}
-                                                                disabled={processingId === apt._id}
-                                                                className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-                                                            >
-                                                                {processingId === apt._id ? (
-                                                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                                                ) : (
-                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                    </svg>
-                                                                )}
-                                                                Accept
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleReject(apt._id)}
-                                                                disabled={processingId === apt._id}
-                                                                className="px-4 py-2 rounded-lg bg-red-100 text-red-700 text-sm font-medium hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center gap-2"
-                                                            >
-                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                                </svg>
-                                                                Reject
-                                                            </button>
-                                                        </div>
-                                                    )}
+                                                    <div className="flex-1">
+                                                        <h3 className="font-semibold text-slate-800 text-lg">{apt.patientName}</h3>
+                                                        <p className="text-sm text-slate-500">{apt.patientEmail}</p>
+                                                    </div>
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(apt.status)}`}>
+                                                        {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
+                                                    </span>
                                                 </div>
+
+                                                <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    {new Date(apt.requestedDate).toLocaleDateString('en-US', {
+                                                        weekday: 'short',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        year: 'numeric',
+                                                    })}
+                                                </div>
+
+                                                {apt.message && (
+                                                    <p className="text-sm text-slate-600 bg-slate-50 rounded-lg p-3 border border-slate-100 mb-4">
+                                                        "{apt.message}"
+                                                    </p>
+                                                )}
+
+                                                {apt.status === 'pending' && (
+                                                    <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
+                                                        <button
+                                                            onClick={() => handleAccept(apt._id)}
+                                                            disabled={processingId === apt._id}
+                                                            className="flex-1 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                                        >
+                                                            {processingId === apt._id ? (
+                                                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                            ) : (
+                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            )}
+                                                            Accept
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleReject(apt._id)}
+                                                            disabled={processingId === apt._id}
+                                                            className="flex-1 px-4 py-2.5 rounded-lg bg-red-100 text-red-700 text-sm font-medium hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                                        >
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                     </div>

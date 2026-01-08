@@ -62,7 +62,7 @@ export default function DashboardPage() {
         <AuthGuard>
             <div className="min-h-screen bg-slate-50">
                 <div className="pt-20 px-4 sm:px-6 lg:px-8 pb-12">
-                    <div className="max-w-4xl mx-auto space-y-6">
+                    <div className="max-w-7xl mx-auto space-y-6">
 
                         {/* Welcome Header */}
                         <div>
@@ -72,7 +72,7 @@ export default function DashboardPage() {
                             <p className="text-slate-500">{todayStr}</p>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                             {/* Profile Card */}
                             <div className="lg:col-span-1">
                                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -95,7 +95,7 @@ export default function DashboardPage() {
                                                         type="text"
                                                         value={name}
                                                         onChange={(e) => setName(e.target.value)}
-                                                        className="w-full mt-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                                        className="w-full mt-1 px-3 py-2 border border-slate-200 text-slate-800 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                                                     />
                                                 </div>
                                                 <div className="flex gap-2">
@@ -127,6 +127,12 @@ export default function DashboardPage() {
                                                             : 'Recently joined'}
                                                     </p>
                                                 </div>
+                                                {user?.role === 'doctor' && user?.specialization && (
+                                                    <div>
+                                                        <p className="text-sm text-slate-500">Specialization</p>
+                                                        <p className="font-medium text-slate-800">{user.specialization}</p>
+                                                    </div>
+                                                )}
                                                 <button
                                                     onClick={() => setIsEditing(true)}
                                                     className="w-full py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 flex items-center justify-center gap-2"
@@ -143,7 +149,7 @@ export default function DashboardPage() {
                             </div>
 
                             {/* Right Column - Activity */}
-                            <div className="lg:col-span-2 space-y-6">
+                            <div className="lg:col-span-3 space-y-6">
                                 {/* Today's Summary - Doctor Only */}
                                 {user?.role === 'doctor' && (
                                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
@@ -166,14 +172,14 @@ export default function DashboardPage() {
                                     </div>
                                 )}
 
-                                {/* Recent Activity for Doctors / Quick Actions for Patients */}
+                                {/* Recent Activity for Doctors / Quick Actions for Patients / Admin Actions */}
                                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
                                     <div className="px-5 py-4 border-b border-slate-100">
                                         <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                                             <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            {user?.role === 'doctor' ? 'Recent Activity' : 'Quick Actions'}
+                                            {user?.role === 'doctor' ? 'Recent Activity' : user?.role === 'admin' ? 'Admin Actions' : 'Quick Actions'}
                                         </h3>
                                     </div>
 
@@ -207,6 +213,27 @@ export default function DashboardPage() {
                                                 ))}
                                             </div>
                                         )
+                                    ) : user?.role === 'admin' ? (
+                                        // Admin view - show manage doctors link
+                                        <div className="p-5">
+                                            <Link
+                                                href="/admin/doctors"
+                                                className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 hover:bg-violet-50 transition-colors group"
+                                            >
+                                                <div className="w-10 h-10 bg-violet-100 group-hover:bg-violet-200 rounded-lg flex items-center justify-center transition-colors">
+                                                    <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-slate-800 group-hover:text-violet-700 transition-colors">Manage Doctors</p>
+                                                    <p className="text-sm text-slate-500">Add, view, and manage doctor accounts</p>
+                                                </div>
+                                                <svg className="w-5 h-5 text-slate-400 group-hover:text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </Link>
+                                        </div>
                                     ) : (
                                         // Patient view - show quick action links
                                         <div className="p-5 space-y-3">

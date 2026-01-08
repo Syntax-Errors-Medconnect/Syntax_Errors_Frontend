@@ -8,6 +8,7 @@ interface Doctor {
     _id: string;
     name: string;
     email: string;
+    specialization: string | null;
     patientCount: number;
 }
 
@@ -22,7 +23,7 @@ export default function DoctorsPage() {
             try {
                 const response = await visitApi.getDoctors();
                 if (response.data.success) {
-                    setDoctors(response.data.data.doctors);
+                    setDoctors(response.data.data.doctors as Doctor[]);
                 }
             } catch (err) {
                 console.error('Error fetching doctors:', err);
@@ -36,7 +37,8 @@ export default function DoctorsPage() {
     }, []);
 
     const filteredDoctors = doctors.filter(doctor =>
-        doctor.name.toLowerCase().includes(searchQuery.toLowerCase())
+        doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (doctor.specialization && doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     return (
@@ -58,10 +60,10 @@ export default function DoctorsPage() {
                                 </svg>
                                 <input
                                     type="text"
-                                    placeholder="Search by name..."
+                                    placeholder="Search by name or specialization..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                                    className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
                                 />
                             </div>
                         </div>
@@ -92,33 +94,38 @@ export default function DoctorsPage() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="divide-y divide-slate-100">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {filteredDoctors.map((doctor) => (
                                         <div
                                             key={doctor._id}
-                                            className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors"
+                                            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-lg hover:-translate-y-1 hover:border-violet-300 transition-all duration-200 group"
                                         >
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                            <div className="flex flex-col items-center text-center">
+                                                <div className="w-20 h-20 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center text-white font-bold text-2xl mb-4 group-hover:scale-110 transition-transform duration-200">
                                                     {doctor.name.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div>
-                                                    <p className="font-semibold text-slate-800">Dr. {doctor.name}</p>
-                                                    <p className="text-sm text-slate-500">{doctor.email}</p>
-                                                    <p className="text-xs text-slate-400 mt-0.5">
-                                                        {doctor.patientCount} patient{doctor.patientCount !== 1 ? 's' : ''}
-                                                    </p>
-                                                </div>
+                                                <h3 className="font-semibold text-lg text-slate-800 mb-2">Dr. {doctor.name}</h3>
+                                                {doctor.specialization && (
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 mb-3">
+                                                        {doctor.specialization}
+                                                    </span>
+                                                )}
+                                                <p className="text-sm text-slate-500 mb-2">{doctor.email}</p>
+                                                <p className="text-xs text-slate-400 mb-4">
+                                                    {doctor.patientCount} patient{doctor.patientCount !== 1 ? 's' : ''}
+                                                </p>
+
+                                                <a
+                                                    href={`mailto:${doctor.email}`}
+                                                    className="w-full py-2 px-4 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
+                                                    title="Email doctor"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                    </svg>
+                                                    Email Doctor
+                                                </a>
                                             </div>
-                                            <a
-                                                href={`mailto:${doctor.email}`}
-                                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-                                                title="Email doctor"
-                                            >
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                </svg>
-                                            </a>
                                         </div>
                                     ))}
                                 </div>

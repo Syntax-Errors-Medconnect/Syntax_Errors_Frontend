@@ -12,19 +12,14 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState<'doctor' | 'patient' | ''>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const { register, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
 
     const handleGoogleSignup = () => {
-        if (!role) {
-            setError('Please select your role before continuing with Google');
-            return;
-        }
-        // Redirect to backend Google OAuth endpoint with role
-        window.location.href = `${API_BASE_URL}/api/oauth/google?role=${role}`;
+        // Redirect to backend Google OAuth endpoint - defaults to patient
+        window.location.href = `${API_BASE_URL}/api/oauth/google?role=patient`;
     };
 
     // Redirect if already authenticated
@@ -37,11 +32,6 @@ export default function RegisterPage() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError('');
-
-        if (!role) {
-            setError('Please select your role');
-            return;
-        }
 
         if (password !== confirmPassword) {
             setError('Passwords do not match');
@@ -56,7 +46,8 @@ export default function RegisterPage() {
         setIsSubmitting(true);
 
         try {
-            await register({ name, email, password, role: role as 'doctor' | 'patient' });
+            // Always register as patient - doctors are added by admin
+            await register({ name, email, password, role: 'patient' });
             router.replace('/dashboard');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Registration failed');
@@ -108,7 +99,7 @@ export default function RegisterPage() {
                         <h1 className="text-2xl font-bold text-slate-800">
                             Create Account
                         </h1>
-                        <p className="text-slate-500 mt-2 text-sm">Join the Clinical Visit Summary Manager</p>
+                        <p className="text-slate-500 mt-2 text-sm">Join MedConnect as a patient</p>
                     </div>
 
                     {error && (
@@ -121,45 +112,6 @@ export default function RegisterPage() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Role Selection */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-3">
-                                I am a <span className="text-red-500">*</span>
-                            </label>
-                            <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setRole('doctor')}
-                                    className={`p-4 rounded-xl border-2 transition-all duration-200 ${role === 'doctor'
-                                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                                        : 'border-slate-200 hover:border-slate-300 text-slate-600'
-                                        }`}
-                                >
-                                    <div className="flex flex-col items-center gap-2">
-                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span className="font-semibold">Doctor</span>
-                                    </div>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setRole('patient')}
-                                    className={`p-4 rounded-xl border-2 transition-all duration-200 ${role === 'patient'
-                                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                                        : 'border-slate-200 hover:border-slate-300 text-slate-600'
-                                        }`}
-                                >
-                                    <div className="flex flex-col items-center gap-2">
-                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                        <span className="font-semibold">Patient</span>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-
                         {/* Name */}
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
@@ -322,12 +274,6 @@ export default function RegisterPage() {
                         </button>
                     </div>
 
-                    {role && (
-                        <p className="mt-3 text-center text-xs text-slate-500">
-                            Signing up as: <span className="font-semibold text-emerald-600 capitalize">{role}</span>
-                        </p>
-                    )}
-
                     <div className="mt-6 text-center">
                         <p className="text-slate-500 text-sm">
                             Already have an account?{' '}
@@ -343,7 +289,7 @@ export default function RegisterPage() {
 
                 {/* Footer */}
                 <p className="text-center mt-6 text-slate-400 text-xs">
-                    © 2024 Clinical Visit Summary Manager. All rights reserved.
+                    © 2024 MedConnect. All rights reserved.
                 </p>
             </div>
         </div>

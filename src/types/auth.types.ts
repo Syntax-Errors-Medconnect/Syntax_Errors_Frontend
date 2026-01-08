@@ -2,7 +2,8 @@ export interface User {
     _id: string;
     name: string;
     email: string;
-    role: 'doctor' | 'patient';
+    role: 'doctor' | 'patient' | 'admin';
+    specialization?: string | null;
     isActive: boolean;
     lastLogin?: string;
     createdAt: string;

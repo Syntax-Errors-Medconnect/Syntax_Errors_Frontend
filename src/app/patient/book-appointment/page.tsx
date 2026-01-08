@@ -11,6 +11,7 @@ interface Doctor {
     _id: string;
     name: string;
     email: string;
+    specialization?: string | null;
     patientCount: number;
 }
 
@@ -123,16 +124,16 @@ export default function BookAppointmentPage() {
                             {/* Error/Warning Message */}
                             {error && (
                                 <div className={`rounded-xl p-4 flex items-center gap-3 ${error.toLowerCase().includes('pending')
-                                        ? 'bg-amber-50 border border-amber-200'
-                                        : 'bg-red-50 border border-red-200'
+                                    ? 'bg-amber-50 border border-amber-200'
+                                    : 'bg-red-50 border border-red-200'
                                     }`}>
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${error.toLowerCase().includes('pending')
-                                            ? 'bg-amber-100'
-                                            : 'bg-red-100'
+                                        ? 'bg-amber-100'
+                                        : 'bg-red-100'
                                         }`}>
                                         <svg className={`w-5 h-5 ${error.toLowerCase().includes('pending')
-                                                ? 'text-amber-600'
-                                                : 'text-red-600'
+                                            ? 'text-amber-600'
+                                            : 'text-red-600'
                                             }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             {error.toLowerCase().includes('pending') ? (
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -143,14 +144,14 @@ export default function BookAppointmentPage() {
                                     </div>
                                     <div>
                                         <p className={`font-medium ${error.toLowerCase().includes('pending')
-                                                ? 'text-amber-800'
-                                                : 'text-red-800'
+                                            ? 'text-amber-800'
+                                            : 'text-red-800'
                                             }`}>
                                             {error.toLowerCase().includes('pending') ? 'Pending Request Exists' : 'Error'}
                                         </p>
                                         <p className={`text-sm ${error.toLowerCase().includes('pending')
-                                                ? 'text-amber-600'
-                                                : 'text-red-600'
+                                            ? 'text-amber-600'
+                                            : 'text-red-600'
                                             }`}>
                                             {error}
                                         </p>
@@ -192,9 +193,14 @@ export default function BookAppointmentPage() {
                                                     <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
                                                         {doctor.name.charAt(0).toUpperCase()}
                                                     </div>
-                                                    <div>
+                                                    <div className="flex-1">
                                                         <p className="font-medium text-slate-800">Dr. {doctor.name}</p>
-                                                        <p className="text-sm text-slate-500">{doctor.email}</p>
+                                                        {doctor.specialization && (
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 mt-1">
+                                                                {doctor.specialization}
+                                                            </span>
+                                                        )}
+                                                        <p className="text-sm text-slate-500 mt-0.5">{doctor.email}</p>
                                                     </div>
                                                 </label>
                                             ))}
@@ -212,7 +218,7 @@ export default function BookAppointmentPage() {
                                         value={requestedDate}
                                         onChange={(e) => setRequestedDate(e.target.value)}
                                         min={new Date().toISOString().split('T')[0]}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                                     />
                                 </div>
 
@@ -227,7 +233,7 @@ export default function BookAppointmentPage() {
                                         placeholder="Describe your symptoms or reason for visit..."
                                         rows={4}
                                         maxLength={500}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"
                                     />
                                     <p className="text-xs text-slate-400 mt-1 text-right">
                                         {message.length}/500 characters
